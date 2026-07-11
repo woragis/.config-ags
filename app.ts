@@ -23,7 +23,7 @@ app.start({
     if (settings) {
       settings.gtkIconThemeName = ICON_THEME
       settings.gtkCursorThemeName = "Adwaita"
-      settings.gtkFontName = "JetBrainsMono Nerd Font 11"
+      settings.gtkFontName = "JetBrainsMono Nerd Font 14"
     }
 
     for (const monitor of app.get_monitors()) {
