@@ -84,8 +84,9 @@ window.Bar menubutton {
 }
 
 /* ── Workspaces ─────────────────────────────────────────── */
-window.Bar .Workspaces button.workspace {
-  padding: 2px 5px;
+/* Each workspace is a box (not a nested-button tree). */
+window.Bar .Workspaces .workspace {
+  padding: 1px 2px;
   margin: 0 1px;
   color: @tn-dim;
   border: 1px solid transparent;
@@ -94,29 +95,29 @@ window.Bar .Workspaces button.workspace {
   transition: 200ms ease;
 }
 
-window.Bar .Workspaces button.workspace.empty {
+window.Bar .Workspaces .workspace.empty {
   color: @tn-dim;
   opacity: 0.35;
   min-width: 20px;
 }
 
-window.Bar .Workspaces button.workspace.empty .ws-id {
+window.Bar .Workspaces .workspace.empty .ws-id {
   font-size: 10px;
   font-weight: 500;
 }
 
-window.Bar .Workspaces button.workspace.occupied {
+window.Bar .Workspaces .workspace.occupied {
   color: @tn-fg-dim;
   opacity: 0.95;
   background: alpha(@tn-blue, 0.07);
 }
 
-window.Bar .Workspaces button.workspace.occupied:hover {
+window.Bar .Workspaces .workspace.occupied:hover {
   background: alpha(@tn-blue, 0.14);
   opacity: 1;
 }
 
-window.Bar .Workspaces button.workspace.active {
+window.Bar .Workspaces .workspace.active {
   background: @tn-blue;
   color: @tn-bg;
   font-weight: 800;
@@ -127,29 +128,41 @@ window.Bar .Workspaces button.workspace.active {
     0 0 10px alpha(@tn-blue, 0.35);
 }
 
-window.Bar .Workspaces button.workspace.active .ws-id {
+window.Bar .Workspaces .workspace.active .ws-id {
   color: @tn-bg;
 }
 
-window.Bar .Workspaces button.workspace .ws-app {
-  padding: 0;
+window.Bar .Workspaces .ws-id-btn {
+  min-width: 18px;
+  padding: 2px 4px;
+  border-radius: 5px;
+}
+
+window.Bar .Workspaces .workspace .ws-app {
+  padding: 1px;
   min-width: 0;
+  min-height: 0;
   background: transparent;
   opacity: 1;
+  border-radius: 4px;
 }
 
-window.Bar .Workspaces button.workspace .ws-app:hover {
-  background: transparent;
-  color: inherit;
+window.Bar .Workspaces .workspace .ws-app:hover {
+  background: alpha(@tn-fg, 0.12);
 }
 
-window.Bar .Workspaces button.workspace .ws-overflow {
+window.Bar .Workspaces .workspace.active .ws-app:hover {
+  background: alpha(@tn-bg, 0.18);
+}
+
+window.Bar .Workspaces .workspace .ws-overflow {
   font-size: 10px;
   color: @tn-cyan;
   font-weight: 700;
+  padding: 0 2px;
 }
 
-window.Bar .Workspaces button.workspace.active .ws-overflow {
+window.Bar .Workspaces .workspace.active .ws-overflow {
   color: @tn-bg;
 }
 

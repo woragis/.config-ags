@@ -38,6 +38,8 @@ function WorkspaceButton({ id }: { id: number }) {
   })
   const isOccupied = createComputed(() => wsClients().length > 0)
 
+  // Parent is a box (not a button) so app icon buttons are not nested —
+  // nested Gtk.Buttons eat/break workspace clicks.
   const className = createComputed(() => {
     const parts = ["workspace"]
     if (isActive()) parts.push("active")
@@ -47,35 +49,36 @@ function WorkspaceButton({ id }: { id: number }) {
   })
 
   return (
-    <button
-      class={className}
-      onClicked={() => dispatch("workspace", `${id}`)}
-      tooltipText={`Workspace ${id}`}
-    >
-      <box spacing={3}>
+    <box class={className} spacing={2}>
+      <button
+        class="ws-id-btn"
+        onClicked={() => dispatch("workspace", `${id}`)}
+        tooltipText={`Workspace ${id}`}
+      >
         <label class="ws-id" label={`${id}`} />
-        <box class="ws-icons" spacing={1} visible={isOccupied}>
-          <For each={visible}>
-            {(client) => (
-              <button
-                class="ws-app"
-                tooltipText={client.get_title()}
-                onClicked={() =>
-                  dispatch("focuswindow", `address:${client.get_address()}`)
-                }
-              >
-                <image iconName={iconForClient(client)} pixelSize={16} />
-              </button>
-            )}
-          </For>
-          <label
-            class="ws-overflow"
-            visible={overflow((n) => n > 0)}
-            label={overflow((n) => `+${n}`)}
-          />
-        </box>
+      </button>
+
+      <box class="ws-icons" spacing={1} visible={isOccupied}>
+        <For each={visible}>
+          {(client) => (
+            <button
+              class="ws-app"
+              tooltipText={client.get_title()}
+              onClicked={() =>
+                dispatch("focuswindow", `address:${client.get_address()}`)
+              }
+            >
+              <image iconName={iconForClient(client)} pixelSize={16} />
+            </button>
+          )}
+        </For>
+        <label
+          class="ws-overflow"
+          visible={overflow((n) => n > 0)}
+          label={overflow((n) => `+${n}`)}
+        />
       </box>
-    </button>
+    </box>
   )
 }
 

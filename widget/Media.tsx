@@ -6,7 +6,7 @@ import Pango from "gi://Pango"
 import { formatTime } from "../lib/utils"
 import { useDraggableSlider } from "../lib/sliderDrag"
 
-const SEEK_STEP = 10
+const MUSIC_ICON = "󰝚" // nf-md-music (note), not Spotify
 
 export default function Media() {
   const player = AstalMpris.Player.new("org.mpris.MediaPlayer2.strawberry")
@@ -134,7 +134,7 @@ export default function Media() {
   return (
     <menubutton class={chipClass} tooltipText={tip}>
       <box spacing={6}>
-        <label class="media-icon" label="󰓇" />
+        <label class="media-icon" label={MUSIC_ICON} />
         <label
           class="media-text"
           label={chipLabel}
@@ -153,7 +153,7 @@ export default function Media() {
                 visible={cover((c) => !!c)}
               />
               <label
-                label="󰓇"
+                label={MUSIC_ICON}
                 visible={cover((c) => !c)}
                 css="font-size: 36px; color: #565f89;"
               />
@@ -296,7 +296,7 @@ export default function Media() {
               }}
               tooltipText="Open Strawberry"
             >
-              <label label="󰓇" />
+              <label label={MUSIC_ICON} />
             </button>
           </box>
 
