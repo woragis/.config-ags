@@ -7,6 +7,7 @@ import { formatTime } from "../lib/utils"
 import { useDraggableSlider } from "../lib/sliderDrag"
 
 const MUSIC_ICON = "󰝚" // nf-md-music (note), not Spotify
+const SEEK_STEP = 10
 
 export default function Media() {
   const player = AstalMpris.Player.new("org.mpris.MediaPlayer2.strawberry")
