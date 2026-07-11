@@ -6,6 +6,7 @@ import GLib from "gi://GLib"
 import AstalBluetooth from "gi://AstalBluetooth"
 import AstalNetwork from "gi://AstalNetwork"
 import AstalWp from "gi://AstalWp"
+import { useDraggableSlider } from "../lib/sliderDrag"
 
 function readCpuMem() {
   try {
@@ -51,6 +52,7 @@ export default function SysMenu() {
   const btConnected = createBinding(bluetooth, "isConnected")
   const volume = createBinding(speaker, "volume")
   const mute = createBinding(speaker, "mute")
+  const volSlider = useDraggableSlider(() => volume())
 
   const [idleOn, setIdleOn] = createState(false)
   const [idlePid, setIdlePid] = createState(0)
@@ -88,6 +90,7 @@ export default function SysMenu() {
       return 0
     }
   })
+  const brightSlider = useDraggableSlider(() => brightness())
 
   async function setBrightness(value: number) {
     const pct = Math.round(Math.min(1, Math.max(0.01, value)) * 100)
@@ -161,8 +164,16 @@ export default function SysMenu() {
             <label label="󰕾" />
             <slider
               hexpand
-              value={volume}
-              onChangeValue={({ value }) => speaker.set_volume(value)}
+              value={volSlider.value}
+              onChangeValue={(e) => {
+                volSlider.onChangeValue(e)
+                speaker.set_volume(Math.min(1, Math.max(0, e.value)))
+              }}
+              $={(self) =>
+                volSlider.setup(self, (v) =>
+                  speaker.set_volume(Math.min(1, Math.max(0, v))),
+                )
+              }
             />
             <button onClicked={() => (speaker.mute = !mute())}>
               <label label={mute((m) => (m ? "󰝟" : "󰕾"))} />
@@ -173,8 +184,12 @@ export default function SysMenu() {
             <label label="󰃠" />
             <slider
               hexpand
-              value={brightness}
-              onChangeValue={({ value }) => setBrightness(value)}
+              value={brightSlider.value}
+              onChangeValue={(e) => {
+                brightSlider.onChangeValue(e)
+                setBrightness(e.value)
+              }}
+              $={(self) => brightSlider.setup(self, setBrightness)}
             />
           </box>
 

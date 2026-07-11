@@ -1,16 +1,19 @@
 import { createBinding, createComputed } from "ags"
 import { Gtk } from "ags/gtk4"
 import AstalWp from "gi://AstalWp"
+import { useDraggableSlider } from "../lib/sliderDrag"
 
 export default function Volume() {
   const speaker = AstalWp.get_default()!.defaultSpeaker
   const volume = createBinding(speaker, "volume")
   const mute = createBinding(speaker, "mute")
   const icon = createBinding(speaker, "volumeIcon")
+  const volSlider = useDraggableSlider(() => volume())
 
   const label = createComputed(() => {
     if (mute()) return "mute"
-    return `${Math.round(volume() * 100)}%`
+    const v = volSlider.dragging() ? volSlider.draft() : volume()
+    return `${Math.round(v * 100)}%`
   })
 
   const className = createComputed(() =>
@@ -21,6 +24,10 @@ export default function Volume() {
     if (mute()) return "Muted — scroll to change"
     return `Volume ${Math.round(volume() * 100)}% — scroll to change`
   })
+
+  function commitVolume(value: number) {
+    speaker.set_volume(Math.min(1, Math.max(0, value)))
+  }
 
   return (
     <menubutton class={className} tooltipText={tip}>
@@ -57,8 +64,13 @@ export default function Volume() {
             </button>
             <slider
               hexpand
-              value={volume}
-              onChangeValue={({ value }) => speaker.set_volume(value)}
+              value={volSlider.value}
+              onChangeValue={(e) => {
+                volSlider.onChangeValue(e)
+                // Live preview while dragging feels right for volume
+                speaker.set_volume(Math.min(1, Math.max(0, e.value)))
+              }}
+              $={(self) => volSlider.setup(self, commitVolume)}
             />
           </box>
         </box>

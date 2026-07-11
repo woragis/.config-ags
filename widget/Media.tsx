@@ -4,6 +4,7 @@ import { execAsync } from "ags/process"
 import AstalMpris from "gi://AstalMpris"
 import Pango from "gi://Pango"
 import { formatTime } from "../lib/utils"
+import { useDraggableSlider } from "../lib/sliderDrag"
 
 const SEEK_STEP = 10
 
@@ -58,7 +59,18 @@ export default function Media() {
     return Math.min(1, pos / len)
   })
 
-  const elapsed = createComputed(() => formatTime(position()))
+  const seekSlider = useDraggableSlider(() => progress())
+  const volSlider = useDraggableSlider(() => {
+    const v = volume()
+    return v < 0 ? 0 : v
+  })
+
+  const elapsed = createComputed(() => {
+    if (seekSlider.dragging()) {
+      return formatTime(seekSlider.draft() * (length() || 0))
+    }
+    return formatTime(position())
+  })
   const total = createComputed(() => formatTime(length()))
 
   const shuffleSupported = createComputed(
@@ -89,6 +101,7 @@ export default function Media() {
   )
 
   const volumePct = createComputed(() => {
+    if (volSlider.dragging()) return `${Math.round(volSlider.draft() * 100)}%`
     const v = volume()
     if (v < 0) return "—"
     return `${Math.round(v * 100)}%`
@@ -107,6 +120,15 @@ export default function Media() {
     if (!len || len <= 0) return
     const next = Math.min(len, Math.max(0, player.position + delta))
     player.set_position(next)
+  }
+
+  function commitSeek(value: number) {
+    const len = length()
+    if (len > 0 && player.canSeek) player.set_position(value * len)
+  }
+
+  function commitVolume(value: number) {
+    player.set_volume(Math.min(1, Math.max(0, value)))
   }
 
   return (
@@ -176,11 +198,9 @@ export default function Media() {
               class="media-seek"
               hexpand
               sensitive={canSeek}
-              value={progress}
-              onChangeValue={({ value }) => {
-                const len = length()
-                if (len > 0) player.set_position(value * len)
-              }}
+              value={seekSlider.value}
+              onChangeValue={seekSlider.onChangeValue}
+              $={(self) => seekSlider.setup(self, commitSeek)}
             />
             <box hexpand>
               <label class="track-time" xalign={0} hexpand label={elapsed} />
@@ -290,8 +310,9 @@ export default function Media() {
             <slider
               class="media-vol"
               hexpand
-              value={volume((v) => (v < 0 ? 0 : v))}
-              onChangeValue={({ value }) => player.set_volume(value)}
+              value={volSlider.value}
+              onChangeValue={volSlider.onChangeValue}
+              $={(self) => volSlider.setup(self, commitVolume)}
             />
             <label class="track-time" label={volumePct} widthChars={4} />
           </box>
