@@ -5,6 +5,8 @@ import AstalMpris from "gi://AstalMpris"
 import Pango from "gi://Pango"
 import { formatTime } from "../lib/utils"
 
+const SEEK_STEP = 10
+
 export default function Media() {
   const player = AstalMpris.Player.new("org.mpris.MediaPlayer2.strawberry")
   const available = createBinding(player, "available")
@@ -18,6 +20,9 @@ export default function Media() {
   const canNext = createBinding(player, "canGoNext")
   const canControl = createBinding(player, "canControl")
   const canSeek = createBinding(player, "canSeek")
+  const volume = createBinding(player, "volume")
+  const loopStatus = createBinding(player, "loopStatus")
+  const shuffleStatus = createBinding(player, "shuffleStatus")
 
   const playing = createComputed(
     () => status() === AstalMpris.PlaybackStatus.PLAYING,
@@ -53,10 +58,56 @@ export default function Media() {
     return Math.min(1, pos / len)
   })
 
-  const timeLabel = createComputed(() => {
-    if (!available()) return ""
-    return `${formatTime(position())} / ${formatTime(length())}`
+  const elapsed = createComputed(() => formatTime(position()))
+  const total = createComputed(() => formatTime(length()))
+
+  const shuffleSupported = createComputed(
+    () => shuffleStatus() !== AstalMpris.Shuffle.UNSUPPORTED,
+  )
+
+  const loopIcon = createComputed(() => {
+    switch (loopStatus()) {
+      case AstalMpris.Loop.TRACK:
+        return "󰑘"
+      case AstalMpris.Loop.PLAYLIST:
+        return "󰕇"
+      default:
+        return "󰑖"
+    }
   })
+
+  const loopClass = createComputed(() => {
+    const s = loopStatus()
+    if (s === AstalMpris.Loop.TRACK || s === AstalMpris.Loop.PLAYLIST) {
+      return "media-btn active"
+    }
+    return "media-btn"
+  })
+
+  const loopSupported = createComputed(
+    () => loopStatus() !== AstalMpris.Loop.UNSUPPORTED,
+  )
+
+  const volumePct = createComputed(() => {
+    const v = volume()
+    if (v < 0) return "—"
+    return `${Math.round(v * 100)}%`
+  })
+
+  const volumeSupported = createComputed(() => volume() >= 0)
+  const showVolume = createComputed(() => available() && volumeSupported())
+
+  const shuffleClass = createComputed(() =>
+    shuffleStatus() === AstalMpris.Shuffle.ON ? "media-btn active" : "media-btn",
+  )
+
+  function seekBy(delta: number) {
+    if (!player.canSeek) return
+    const len = player.length
+    if (!len || len <= 0) return
+    const next = Math.min(len, Math.max(0, player.position + delta))
+    player.set_position(next)
+  }
 
   return (
     <menubutton class={chipClass} tooltipText={tip}>
@@ -71,11 +122,11 @@ export default function Media() {
         />
       </box>
       <popover>
-        <box class="media-popover" orientation={Gtk.Orientation.VERTICAL} spacing={8}>
+        <box class="media-popover" orientation={Gtk.Orientation.VERTICAL} spacing={10}>
           <box spacing={10} visible={available}>
             <box class="cover" overflow={Gtk.Overflow.HIDDEN}>
               <image
-                pixelSize={64}
+                pixelSize={72}
                 file={cover}
                 visible={cover((c) => !!c)}
               />
@@ -95,17 +146,16 @@ export default function Media() {
                 class="track-title"
                 xalign={0}
                 label={title((t) => t || "No title")}
-                maxWidthChars={26}
+                maxWidthChars={28}
                 ellipsize={Pango.EllipsizeMode.END}
               />
               <label
                 class="track-artist"
                 xalign={0}
                 label={artist((a) => a || "—")}
-                maxWidthChars={26}
+                maxWidthChars={28}
                 ellipsize={Pango.EllipsizeMode.END}
               />
-              <label class="track-time" xalign={0} label={timeLabel} />
             </box>
           </box>
 
@@ -115,18 +165,46 @@ export default function Media() {
             label="Nothing playing"
           />
 
-          <slider
+          {/* Progress */}
+          <box
+            class="media-progress"
+            orientation={Gtk.Orientation.VERTICAL}
+            spacing={4}
             visible={available}
-            sensitive={canSeek}
-            value={progress}
-            onChangeValue={({ value }) => {
-              const len = length()
-              if (len > 0) player.set_position(value * len)
-            }}
-          />
+          >
+            <slider
+              class="media-seek"
+              hexpand
+              sensitive={canSeek}
+              value={progress}
+              onChangeValue={({ value }) => {
+                const len = length()
+                if (len > 0) player.set_position(value * len)
+              }}
+            />
+            <box hexpand>
+              <label class="track-time" xalign={0} hexpand label={elapsed} />
+              <label class="track-time" xalign={1} label={total} />
+            </box>
+          </box>
 
-          <box spacing={4} halign={Gtk.Align.CENTER}>
+          {/* Transport */}
+          <box
+            class="media-transport"
+            spacing={4}
+            halign={Gtk.Align.CENTER}
+            visible={available}
+          >
             <button
+              class="media-btn"
+              sensitive={canSeek}
+              onClicked={() => seekBy(-SEEK_STEP)}
+              tooltipText={`Back ${SEEK_STEP}s`}
+            >
+              <label label="󰓕" />
+            </button>
+            <button
+              class="media-btn"
               sensitive={canPrev}
               onClicked={() => player.previous()}
               tooltipText="Previous"
@@ -134,7 +212,7 @@ export default function Media() {
               <label label="󰒮" />
             </button>
             <button
-              class="play"
+              class="media-btn play"
               sensitive={canControl}
               onClicked={() => player.play_pause()}
               tooltipText="Play / Pause"
@@ -142,6 +220,7 @@ export default function Media() {
               <label label={playing((p) => (p ? "󰏤" : "󰐊"))} />
             </button>
             <button
+              class="media-btn"
               sensitive={canNext}
               onClicked={() => player.next()}
               tooltipText="Next"
@@ -149,6 +228,48 @@ export default function Media() {
               <label label="󰒭" />
             </button>
             <button
+              class="media-btn"
+              sensitive={canSeek}
+              onClicked={() => seekBy(SEEK_STEP)}
+              tooltipText={`Forward ${SEEK_STEP}s`}
+            >
+              <label label="󰓖" />
+            </button>
+          </box>
+
+          {/* Mode + open */}
+          <box
+            class="media-modes"
+            spacing={4}
+            halign={Gtk.Align.CENTER}
+            visible={available}
+          >
+            <button
+              class={shuffleClass}
+              sensitive={shuffleSupported}
+              onClicked={() => player.shuffle()}
+              tooltipText="Shuffle"
+            >
+              <label label="󰒝" />
+            </button>
+            <button
+              class={loopClass}
+              sensitive={loopSupported}
+              onClicked={() => player.loop()}
+              tooltipText="Repeat"
+            >
+              <label label={loopIcon} />
+            </button>
+            <button
+              class="media-btn"
+              sensitive={canControl}
+              onClicked={() => player.stop()}
+              tooltipText="Stop"
+            >
+              <label label="󰓛" />
+            </button>
+            <button
+              class="media-btn"
               onClicked={() => {
                 if (player.available && player.canRaise) player.raise()
                 else execAsync("strawberry").catch(printerr)
@@ -157,6 +278,22 @@ export default function Media() {
             >
               <label label="󰓇" />
             </button>
+          </box>
+
+          {/* Player volume */}
+          <box
+            class="media-volume"
+            spacing={8}
+            visible={showVolume}
+          >
+            <label label="󰕾" />
+            <slider
+              class="media-vol"
+              hexpand
+              value={volume((v) => (v < 0 ? 0 : v))}
+              onChangeValue={({ value }) => player.set_volume(value)}
+            />
+            <label class="track-time" label={volumePct} widthChars={4} />
           </box>
         </box>
       </popover>

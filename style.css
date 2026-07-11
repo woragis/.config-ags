@@ -379,7 +379,9 @@ window.Bar .SysMenu:hover {
 button.play {
   background: alpha(@tn-blue, 0.22);
   border-radius: 999px;
-  padding: 6px 11px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
   border: 1px solid alpha(@tn-blue, 0.32);
   transition: 160ms ease;
 }
@@ -388,9 +390,88 @@ button.play:hover {
   background: alpha(@tn-blue, 0.38);
 }
 
-slider {
+/* GTK Scale: widget=scale, track=trough, thumb=slider
+   Never put a large min-width on `slider` — that stretches the thumb. */
+scale {
   min-width: 140px;
-  min-height: 16px;
+  padding: 6px 2px;
+}
+
+scale trough {
+  min-height: 6px;
+  border-radius: 99px;
+  background: alpha(@tn-surface, 0.95);
+  border: 1px solid alpha(@tn-blue, 0.12);
+}
+
+scale highlight {
+  min-height: 6px;
+  border-radius: 99px;
+  background: alpha(@tn-blue, 0.75);
+}
+
+scale slider {
+  min-width: 14px;
+  min-height: 14px;
+  margin: -5px 0;
+  border-radius: 99px;
+  background: @tn-fg;
+  border: 2px solid @tn-blue;
+  box-shadow: 0 1px 4px alpha(#000000, 0.35);
+}
+
+scale slider:hover {
+  background: @tn-cyan;
+  border-color: @tn-cyan;
+}
+
+scale.media-seek highlight {
+  background: alpha(@tn-green, 0.8);
+}
+
+scale.media-seek slider {
+  border-color: @tn-green;
+}
+
+scale.media-vol highlight {
+  background: alpha(@tn-cyan, 0.75);
+}
+
+scale.media-vol slider {
+  border-color: @tn-cyan;
+}
+
+.media-popover {
+  min-width: 300px;
+}
+
+.media-btn {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border-radius: 8px;
+  background: alpha(@tn-surface, 0.55);
+  border: 1px solid alpha(@tn-blue, 0.1);
+  color: @tn-fg;
+  transition: 150ms ease;
+}
+
+.media-btn:hover {
+  background: alpha(@tn-blue, 0.16);
+  border-color: alpha(@tn-blue, 0.3);
+  color: @tn-cyan;
+}
+
+.media-btn.active {
+  background: alpha(@tn-blue, 0.22);
+  border-color: alpha(@tn-blue, 0.45);
+  color: @tn-blue;
+}
+
+.media-volume {
+  padding: 2px 4px;
+  border-radius: 8px;
+  background: alpha(@tn-bg-alt, 0.7);
 }
 
 .sys-popover .sys-row {
