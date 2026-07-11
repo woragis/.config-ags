@@ -27,7 +27,7 @@ export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
       application={app}
     >
       <centerbox cssName="bar-center">
-        <box $type="start" class="Left" spacing={5} valign={Gtk.Align.CENTER}>
+        <box $type="start" class="Left" spacing={7} valign={Gtk.Align.CENTER}>
           <Workspaces />
           <FocusedTitle />
         </box>
@@ -36,7 +36,7 @@ export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
           <Media />
         </box>
 
-        <box $type="end" class="Right" spacing={1} valign={Gtk.Align.CENTER}>
+        <box $type="end" class="Right" spacing={2} valign={Gtk.Align.CENTER}>
           <Volume />
           <Battery />
           <Clock />

@@ -135,7 +135,7 @@ function WorkspaceButton({ id }: { id: number }) {
                 dispatch("focuswindow", `address:${client.get_address()}`)
               }
             >
-              <image iconName={iconForClient(client)} pixelSize={16} />
+              <image iconName={iconForClient(client)} pixelSize={22} />
             </button>
           )}
         </For>

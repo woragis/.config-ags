@@ -19,17 +19,18 @@ window.Bar {
   background: transparent;
   color: @tn-fg;
   font-family: "JetBrainsMono Nerd Font", "JetBrainsMono NF", monospace;
-  font-size: 12px;
+  /* Sized for monitor scale 1.0 (was tuned under auto 1.5) */
+  font-size: 15px;
   font-weight: 600;
 }
 
 window.Bar > centerbox.bar-center {
   background: alpha(@tn-bg, 0.8);
   border: 1px solid alpha(@tn-blue, 0.16);
-  border-radius: 12px;
-  margin: 5px 10px 0;
-  padding: 2px 5px;
-  min-height: 30px;
+  border-radius: 14px;
+  margin: 6px 12px 0;
+  padding: 4px 8px;
+  min-height: 42px;
   box-shadow:
     0 5px 18px alpha(#000000, 0.38),
     inset 0 1px 0 alpha(@tn-fg, 0.04);
@@ -38,9 +39,9 @@ window.Bar > centerbox.bar-center {
 window.Bar .module {
   background: transparent;
   border: none;
-  border-radius: 8px;
-  padding: 2px 6px;
-  min-height: 24px;
+  border-radius: 10px;
+  padding: 3px 8px;
+  min-height: 32px;
   transition: 180ms ease;
 }
 
@@ -51,16 +52,16 @@ window.Bar .module:hover {
 window.Bar .cluster {
   background: alpha(@tn-bg-alt, 0.8);
   border: 1px solid alpha(@tn-blue, 0.1);
-  border-radius: 9px;
-  padding: 1px 2px;
-  min-height: 24px;
+  border-radius: 11px;
+  padding: 2px 4px;
+  min-height: 32px;
 }
 
 window.Bar button {
   background: transparent;
   border: none;
-  border-radius: 7px;
-  padding: 2px 5px;
+  border-radius: 8px;
+  padding: 3px 7px;
   min-height: 0;
   color: @tn-fg;
   transition: 180ms ease;
@@ -86,11 +87,11 @@ window.Bar menubutton {
 /* ── Workspaces ─────────────────────────────────────────── */
 /* Active (C): quiet index · Inactive empty (D): dot · Inactive occupied: icons */
 window.Bar .Workspaces .workspace {
-  padding: 1px 2px;
-  margin: 0 1px;
+  padding: 2px 3px;
+  margin: 0 2px;
   color: @tn-dim;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: 8px;
   opacity: 0.5;
   transition: 200ms ease;
 }
@@ -98,14 +99,14 @@ window.Bar .Workspaces .workspace {
 window.Bar .Workspaces .workspace.empty {
   color: @tn-dim;
   opacity: 0.4;
-  min-width: 14px;
+  min-width: 18px;
 }
 
 window.Bar .Workspaces .workspace.occupied {
   color: @tn-fg-dim;
   opacity: 0.95;
   background: alpha(@tn-blue, 0.07);
-  padding: 1px 3px;
+  padding: 2px 4px;
 }
 
 window.Bar .Workspaces .workspace.occupied:hover {
@@ -122,30 +123,30 @@ window.Bar .Workspaces .workspace.active {
   box-shadow:
     inset 0 0 0 1px alpha(@tn-magenta, 0.25),
     0 0 10px alpha(@tn-blue, 0.25);
-  padding: 1px 4px;
+  padding: 2px 6px;
 }
 
 window.Bar .Workspaces .ws-index-btn {
-  min-width: 14px;
-  padding: 1px 3px;
-  border-radius: 4px;
+  min-width: 18px;
+  padding: 2px 4px;
+  border-radius: 5px;
 }
 
 window.Bar .Workspaces .workspace.active .ws-id {
   color: @tn-blue;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.02em;
 }
 
 window.Bar .Workspaces .ws-dot-btn {
-  min-width: 12px;
-  padding: 2px 4px;
-  border-radius: 4px;
+  min-width: 16px;
+  padding: 3px 5px;
+  border-radius: 5px;
 }
 
 window.Bar .Workspaces .ws-dot {
-  font-size: 7px;
+  font-size: 9px;
   color: @tn-dim;
   opacity: 0.85;
 }
@@ -179,7 +180,7 @@ window.Bar .Workspaces .ws-overflow-btn {
 }
 
 window.Bar .Workspaces .workspace .ws-overflow {
-  font-size: 10px;
+  font-size: 13px;
   color: @tn-cyan;
   font-weight: 700;
 }
@@ -193,7 +194,7 @@ window.Bar .FocusedTitle {
   color: @tn-muted;
   font-weight: 500;
   opacity: 0.85;
-  padding: 2px 8px;
+  padding: 3px 10px;
 }
 
 window.Bar .FocusedTitle label {
@@ -208,8 +209,8 @@ window.Bar .FocusedTitle:hover {
 
 /* ── Media ──────────────────────────────────────────────── */
 window.Bar .Media {
-  padding: 2px 8px;
-  border-radius: 9px;
+  padding: 3px 10px;
+  border-radius: 11px;
   min-width: 0;
   border: 1px solid transparent;
   transition: 220ms ease;
@@ -218,7 +219,7 @@ window.Bar .Media {
 window.Bar .Media.idle {
   background: transparent;
   opacity: 0.45;
-  padding: 2px 6px;
+  padding: 3px 8px;
 }
 
 window.Bar .Media.idle:hover {
@@ -228,7 +229,7 @@ window.Bar .Media.idle:hover {
 
 window.Bar .Media.idle .media-icon {
   color: @tn-muted;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 window.Bar .Media.playing {
@@ -238,7 +239,7 @@ window.Bar .Media.playing {
     0 0 12px alpha(@tn-green, 0.12),
     inset 0 0 0 1px alpha(@tn-magenta, 0.05);
   opacity: 1;
-  padding: 2px 10px;
+  padding: 3px 12px;
 }
 
 window.Bar .Media.playing:hover {
@@ -248,7 +249,7 @@ window.Bar .Media.playing:hover {
 
 window.Bar .Media.playing .media-icon {
   color: @tn-green;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 window.Bar .Media.playing .media-text {
@@ -278,7 +279,7 @@ window.Bar .Right .module {
 window.Bar .Volume label {
   color: @tn-cyan;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 14px;
 }
 
 window.Bar .Volume.muted {
@@ -290,7 +291,7 @@ window.Bar .Volume.muted label {
 }
 
 window.Bar .Battery label {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -314,30 +315,30 @@ window.Bar .Battery.critical {
 
 window.Bar .Clock {
   color: @tn-blue;
-  padding: 2px 8px;
+  padding: 3px 10px;
 }
 
 window.Bar .Clock label {
   color: @tn-blue;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 15px;
   letter-spacing: 0.02em;
 }
 
 window.Bar .SysMenu {
   background: alpha(@tn-blue, 0.12);
   border: 1px solid alpha(@tn-blue, 0.32);
-  border-radius: 8px;
+  border-radius: 10px;
   color: @tn-blue;
-  min-width: 26px;
-  padding: 2px 7px;
-  margin-left: 2px;
+  min-width: 34px;
+  padding: 3px 9px;
+  margin-left: 4px;
   transition: 180ms ease;
 }
 
 window.Bar .SysMenu label {
   color: @tn-blue;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 window.Bar .SysMenu:hover {
@@ -351,53 +352,53 @@ window.Bar .SysMenu:hover {
 .sys-popover,
 .volume-popover,
 .clock-popover {
-  padding: 10px;
-  min-width: 252px;
+  padding: 12px;
+  min-width: 280px;
   background: alpha(@tn-bg, 0.97);
   border: 1px solid alpha(@tn-blue, 0.2);
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow: 0 10px 28px alpha(#000000, 0.5);
   color: @tn-fg;
 }
 
 .sys-popover {
-  min-width: 260px;
-  padding: 8px;
+  min-width: 290px;
+  padding: 10px;
 }
 
 .cover {
-  border-radius: 10px;
+  border-radius: 12px;
   background: @tn-surface;
-  min-width: 64px;
-  min-height: 64px;
+  min-width: 72px;
+  min-height: 72px;
   border: 1px solid alpha(@tn-magenta, 0.18);
 }
 
 .track-title {
   font-weight: 700;
   color: @tn-fg;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .track-artist,
 .track-time {
   color: @tn-muted;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .media-empty {
   color: @tn-muted;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 
 .section {
   color: @tn-muted;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
-  margin-top: 4px;
-  margin-bottom: 1px;
+  margin-top: 6px;
+  margin-bottom: 2px;
   opacity: 0.85;
 }
 
@@ -408,14 +409,14 @@ window.Bar .SysMenu:hover {
 .clock-date {
   color: @tn-magenta;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 button.play {
   background: alpha(@tn-blue, 0.22);
   border-radius: 999px;
-  min-width: 36px;
-  min-height: 36px;
+  min-width: 42px;
+  min-height: 42px;
   padding: 0;
   border: 1px solid alpha(@tn-blue, 0.32);
   transition: 160ms ease;
@@ -477,14 +478,14 @@ scale.media-vol slider {
 }
 
 .media-popover {
-  min-width: 300px;
+  min-width: 340px;
 }
 
 .media-btn {
-  min-width: 32px;
-  min-height: 32px;
+  min-width: 38px;
+  min-height: 38px;
   padding: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: alpha(@tn-surface, 0.55);
   border: 1px solid alpha(@tn-blue, 0.1);
   color: @tn-fg;
@@ -510,8 +511,8 @@ scale.media-vol slider {
 }
 
 .sys-popover .sys-row {
-  border-radius: 8px;
-  padding: 5px 8px;
+  border-radius: 10px;
+  padding: 7px 10px;
   min-height: 0;
   background: alpha(@tn-surface, 0.5);
   border: 1px solid alpha(@tn-blue, 0.07);
@@ -530,17 +531,17 @@ scale.media-vol slider {
 }
 
 .sys-popover .sys-stats {
-  padding: 4px 8px;
-  border-radius: 8px;
+  padding: 6px 10px;
+  border-radius: 10px;
   background: alpha(@tn-bg-alt, 0.85);
   color: @tn-fg-dim;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .sys-popover .sys-power button {
-  border-radius: 8px;
-  padding: 6px;
+  border-radius: 10px;
+  padding: 8px;
   background: alpha(@tn-surface, 0.65);
   border: 1px solid alpha(@tn-blue, 0.08);
   transition: 150ms ease;

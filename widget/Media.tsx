@@ -156,7 +156,7 @@ export default function Media() {
               <label
                 label={MUSIC_ICON}
                 visible={cover((c) => !c)}
-                css="font-size: 36px; color: #565f89;"
+                css="font-size: 48px; color: #565f89;"
               />
             </box>
             <box
