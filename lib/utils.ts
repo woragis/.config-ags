@@ -1,18 +1,67 @@
 import AstalApps from "gi://AstalApps"
 import AstalHyprland from "gi://AstalHyprland"
+import Gtk from "gi://Gtk?version=4.0"
+import Gdk from "gi://Gdk?version=4.0"
 
 const apps = new AstalApps.Apps()
 
+/** Prefer real Papirus app icons over Adwaita generic names. */
 const CLASS_ICON: Record<string, string> = {
-  kitty: "utilities-terminal",
-  thunar: "system-file-manager",
-  "org.gnome.Nautilus": "system-file-manager",
+  kitty: "kitty",
+  thunar: "thunar",
+  "thunar-manager": "thunar",
+  strawberry: "strawberry",
+  "org.strawberrymusicplayer.strawberry": "strawberry",
   librewolf: "librewolf",
   firefox: "firefox",
-  strawberry: "strawberry",
+  "firefox-esr": "firefox",
   cursor: "cursor",
-  "code-oss": "code",
+  "code-oss": "code-oss",
+  code: "code",
   Code: "code",
+  "dev.zed.Zed": "zed",
+  zed: "zed",
+  discord: "discord",
+  spotify: "spotify",
+  chromium: "chromium",
+  "google-chrome": "google-chrome",
+  foot: "foot",
+  alacritty: "Alacritty",
+  wezterm: "org.wezfurlong.wezterm",
+  "org.wezfurlong.wezterm": "org.wezfurlong.wezterm",
+  rofi: "rofi",
+  walker: "applications-system",
+  mpv: "mpv",
+  imv: "imv",
+  btop: "utilities-system-monitor",
+}
+
+function iconTheme(): Gtk.IconTheme | null {
+  try {
+    const display = Gdk.Display.get_default()
+    if (!display) return null
+    return Gtk.IconTheme.get_for_display(display)
+  } catch {
+    return null
+  }
+}
+
+function hasIcon(name: string): boolean {
+  if (!name) return false
+  const theme = iconTheme()
+  if (!theme) return true // optimistic if theme not ready yet
+  try {
+    return theme.has_icon(name)
+  } catch {
+    return false
+  }
+}
+
+function firstExisting(...names: Array<string | null | undefined>): string | null {
+  for (const name of names) {
+    if (name && hasIcon(name)) return name
+  }
+  return null
 }
 
 export function clientClass(client: AstalHyprland.Client): string {
@@ -21,21 +70,32 @@ export function clientClass(client: AstalHyprland.Client): string {
 
 export function iconForClass(cls: string): string {
   if (!cls) return "application-x-executable"
-  if (CLASS_ICON[cls]) return CLASS_ICON[cls]
 
   const lower = cls.toLowerCase()
-  if (CLASS_ICON[lower]) return CLASS_ICON[lower]
+  const mapped = CLASS_ICON[cls] || CLASS_ICON[lower]
 
+  let desktopIcon: string | undefined
   try {
     const exact = apps.exact_query(cls)
-    if (exact[0]?.iconName) return exact[0].iconName
-    const fuzzy = apps.fuzzy_query(cls)
-    if (fuzzy[0]?.iconName) return fuzzy[0].iconName
+    desktopIcon = exact[0]?.iconName
+    if (!desktopIcon) {
+      const fuzzy = apps.fuzzy_query(cls)
+      desktopIcon = fuzzy[0]?.iconName
+    }
   } catch {
     // ignore lookup errors
   }
 
-  return lower || "application-x-executable"
+  return (
+    firstExisting(
+      mapped,
+      cls,
+      lower,
+      desktopIcon,
+      // last-resort generics (often Adwaita) — only if nothing else exists
+      "application-x-executable",
+    ) || "application-x-executable"
+  )
 }
 
 export function iconForClient(client: AstalHyprland.Client): string {

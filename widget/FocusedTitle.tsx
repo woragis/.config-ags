@@ -30,7 +30,7 @@ export default function FocusedTitle() {
 
   return (
     <box class="FocusedTitle module" spacing={6} visible={visible}>
-      <image iconName={icon} pixelSize={14} />
+      <image iconName={icon} pixelSize={16} />
       <label
         label={title}
         maxWidthChars={24}
