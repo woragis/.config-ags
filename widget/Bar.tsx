@@ -25,6 +25,7 @@ export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
       exclusivity={Astal.Exclusivity.EXCLUSIVE}
       anchor={TOP | LEFT | RIGHT}
       application={app}
+      css="min-height: 56px;"
     >
       <centerbox cssName="bar-center">
         <box $type="start" class="Left" spacing={7} valign={Gtk.Align.CENTER}>
