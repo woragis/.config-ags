@@ -84,7 +84,7 @@ window.Bar menubutton {
 }
 
 /* ── Workspaces ─────────────────────────────────────────── */
-/* Each workspace is a box (not a nested-button tree). */
+/* Active (C): quiet index · Inactive empty (D): dot · Inactive occupied: icons */
 window.Bar .Workspaces .workspace {
   padding: 1px 2px;
   margin: 0 1px;
@@ -97,19 +97,15 @@ window.Bar .Workspaces .workspace {
 
 window.Bar .Workspaces .workspace.empty {
   color: @tn-dim;
-  opacity: 0.35;
-  min-width: 20px;
-}
-
-window.Bar .Workspaces .workspace.empty .ws-id {
-  font-size: 10px;
-  font-weight: 500;
+  opacity: 0.4;
+  min-width: 14px;
 }
 
 window.Bar .Workspaces .workspace.occupied {
   color: @tn-fg-dim;
   opacity: 0.95;
   background: alpha(@tn-blue, 0.07);
+  padding: 1px 3px;
 }
 
 window.Bar .Workspaces .workspace.occupied:hover {
@@ -118,24 +114,45 @@ window.Bar .Workspaces .workspace.occupied:hover {
 }
 
 window.Bar .Workspaces .workspace.active {
-  background: @tn-blue;
-  color: @tn-bg;
-  font-weight: 800;
+  background: alpha(@tn-blue, 0.22);
+  border-color: alpha(@tn-blue, 0.55);
+  color: @tn-fg;
+  font-weight: 700;
   opacity: 1;
-  border-color: alpha(@tn-magenta, 0.45);
   box-shadow:
-    0 0 0 1px alpha(@tn-magenta, 0.25),
-    0 0 10px alpha(@tn-blue, 0.35);
+    inset 0 0 0 1px alpha(@tn-magenta, 0.25),
+    0 0 10px alpha(@tn-blue, 0.25);
+  padding: 1px 4px;
+}
+
+window.Bar .Workspaces .ws-index-btn {
+  min-width: 14px;
+  padding: 1px 3px;
+  border-radius: 4px;
 }
 
 window.Bar .Workspaces .workspace.active .ws-id {
-  color: @tn-bg;
+  color: @tn-blue;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
-window.Bar .Workspaces .ws-id-btn {
-  min-width: 18px;
+window.Bar .Workspaces .ws-dot-btn {
+  min-width: 12px;
   padding: 2px 4px;
-  border-radius: 5px;
+  border-radius: 4px;
+}
+
+window.Bar .Workspaces .ws-dot {
+  font-size: 7px;
+  color: @tn-dim;
+  opacity: 0.85;
+}
+
+window.Bar .Workspaces .workspace.empty:hover .ws-dot {
+  color: @tn-cyan;
+  opacity: 1;
 }
 
 window.Bar .Workspaces .workspace .ws-app {
@@ -152,18 +169,23 @@ window.Bar .Workspaces .workspace .ws-app:hover {
 }
 
 window.Bar .Workspaces .workspace.active .ws-app:hover {
-  background: alpha(@tn-bg, 0.18);
+  background: alpha(@tn-blue, 0.2);
+}
+
+window.Bar .Workspaces .ws-overflow-btn {
+  padding: 0 2px;
+  min-width: 0;
+  background: transparent;
 }
 
 window.Bar .Workspaces .workspace .ws-overflow {
   font-size: 10px;
   color: @tn-cyan;
   font-weight: 700;
-  padding: 0 2px;
 }
 
 window.Bar .Workspaces .workspace.active .ws-overflow {
-  color: @tn-bg;
+  color: @tn-blue;
 }
 
 /* ── Focused title ──────────────────────────────────────── */
