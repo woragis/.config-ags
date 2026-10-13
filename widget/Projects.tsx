@@ -11,7 +11,7 @@ type Project = {
   icon: string
 }
 
-/** Local systems listen on 127.0.0.1 from port 10000 up. Trends uses 10002 for the panel and 10003 for the API. */
+/** Local systems listen on 127.0.0.1 from port 10000 up. Trends uses 10002 and 10003. Blogs uses 10004 and 10005. */
 const PROJECTS: Project[] = [
   {
     name: "Conversas",
@@ -30,6 +30,12 @@ const PROJECTS: Project[] = [
     unit: "trends.target",
     url: "http://127.0.0.1:10002",
     icon: "󰄧",
+  },
+  {
+    name: "Blogs",
+    unit: "blogs.target",
+    url: "http://127.0.0.1:10004",
+    icon: "󰂺",
   },
 ]
 
@@ -74,7 +80,6 @@ export default function Projects({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
     try {
       await execAsync(["systemctl", "--user", on ? "stop" : "start", project.unit])
       setActive({ ...active(), [project.unit]: !on })
-      if (!on) execAsync(["xdg-open", project.url]).catch(printerr)
     } catch (error) {
       printerr(error)
     } finally {
