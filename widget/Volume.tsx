@@ -4,10 +4,11 @@ import AstalWp from "gi://AstalWp"
 import { useDraggableSlider } from "../lib/sliderDrag"
 
 export default function Volume() {
-  const speaker = AstalWp.get_default()!.defaultSpeaker
-  const volume = createBinding(speaker, "volume")
-  const mute = createBinding(speaker, "mute")
-  const icon = createBinding(speaker, "volumeIcon")
+  const audio = AstalWp.get_default()!
+  const speaker = () => audio.defaultSpeaker
+  const volume = createBinding(audio, "defaultSpeaker", "volume")
+  const mute = createBinding(audio, "defaultSpeaker", "mute")
+  const icon = createBinding(audio, "defaultSpeaker", "volumeIcon")
   const volSlider = useDraggableSlider(() => volume())
 
   const label = createComputed(() => {
@@ -21,12 +22,12 @@ export default function Volume() {
   )
 
   const tip = createComputed(() => {
-    if (mute()) return "Muted — scroll to change"
-    return `Volume ${Math.round(volume() * 100)}% — scroll to change`
+    if (mute()) return "System muted — scroll to change"
+    return `System volume ${Math.round(volume() * 100)}% — scroll to change`
   })
 
   function commitVolume(value: number) {
-    speaker.set_volume(Math.min(1, Math.max(0, value)))
+    speaker()?.set_volume(Math.min(1, Math.max(0, value)))
   }
 
   return (
@@ -39,7 +40,9 @@ export default function Volume() {
           })
           scroll.connect("scroll", (_c, _dx, dy) => {
             const delta = dy < 0 ? 0.03 : -0.03
-            speaker.volume = Math.min(1, Math.max(0, speaker.volume + delta))
+            const s = speaker()
+            if (!s) return true
+            s.volume = Math.min(1, Math.max(0, s.volume + delta))
             return true
           })
           self.add_controller(scroll)
@@ -57,7 +60,10 @@ export default function Volume() {
         >
           <box spacing={8}>
             <button
-              onClicked={() => (speaker.mute = !speaker.mute)}
+              onClicked={() => {
+                const s = speaker()
+                if (s) s.mute = !s.mute
+              }}
               tooltipText="Toggle mute"
             >
               <image iconName={icon} />
@@ -68,7 +74,7 @@ export default function Volume() {
               onChangeValue={(e) => {
                 volSlider.onChangeValue(e)
                 // Live preview while dragging feels right for volume
-                speaker.set_volume(Math.min(1, Math.max(0, e.value)))
+                speaker()?.set_volume(Math.min(1, Math.max(0, e.value)))
               }}
               $={(self) => volSlider.setup(self, commitVolume)}
             />

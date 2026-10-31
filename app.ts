@@ -1,6 +1,7 @@
 import app from "ags/gtk4/app"
 import style from "./style.css"
 import Bar from "./widget/Bar"
+import Projects from "./widget/Projects"
 import Gtk from "gi://Gtk?version=4.0"
 import Adw from "gi://Adw?version=1"
 
@@ -23,11 +24,13 @@ app.start({
     if (settings) {
       settings.gtkIconThemeName = ICON_THEME
       settings.gtkCursorThemeName = "Adwaita"
-      settings.gtkFontName = "JetBrainsMono Nerd Font 14"
+      settings.gtkFontName = "JetBrainsMono Nerd Font 12"
     }
 
-    for (const monitor of app.get_monitors()) {
+    const monitors = app.get_monitors()
+    for (const monitor of monitors) {
       Bar({ gdkmonitor: monitor })
     }
+    if (monitors[0]) Projects({ gdkmonitor: monitors[0] })
   },
 })

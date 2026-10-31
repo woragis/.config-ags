@@ -11,8 +11,38 @@ type Project = {
   icon: string
 }
 
-/** Local systems listen on 127.0.0.1 from port 10000 up. Trends uses 10002 and 10003. Blogs uses 10004 and 10005. */
+/** Local systems use 10000+ for apps and 10500+ for separate APIs. */
 const PROJECTS: Project[] = [
+  {
+    name: "Agency OS",
+    unit: "agency-os.target",
+    url: "http://127.0.0.1:10007",
+    icon: "󰒋",
+  },
+  {
+    name: "Weatherly",
+    unit: "weatherly-web.service",
+    url: "http://127.0.0.1:10008",
+    icon: "󰖐",
+  },
+  {
+    name: "Lingo",
+    unit: "lingo-web.service",
+    url: "http://127.0.0.1:10009",
+    icon: "󰌌",
+  },
+  {
+    name: "Praxis",
+    unit: "praxis-web.service",
+    url: "http://127.0.0.1:10010",
+    icon: "󰆍",
+  },
+  {
+    name: "Lingo Old",
+    unit: "lingo-old.target",
+    url: "http://127.0.0.1:10011",
+    icon: "󰌌",
+  },
   {
     name: "Conversas",
     unit: "conversations",
@@ -37,7 +67,18 @@ const PROJECTS: Project[] = [
     url: "http://127.0.0.1:10004",
     icon: "󰂺",
   },
+  {
+    name: "YouTube",
+    unit: "youtube.target",
+    url: "http://127.0.0.1:10006",
+    icon: "󰗃",
+  },
 ]
+
+function listenPort(url: string): string {
+  const match = /:(\d+)/.exec(url)
+  return match ? `:${match[1]}` : ""
+}
 
 function unitActive(unit: string): boolean {
   try {
@@ -162,15 +203,18 @@ export default function Projects({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
                 valign={Gtk.Align.CENTER}
               >
                 <label class="projects-name" xalign={0} label={project.name} />
-                <label
-                  class={active((state) =>
-                    state[project.unit] ? "projects-status on" : "projects-status",
-                  )}
-                  xalign={0}
-                  label={active((state) =>
-                    state[project.unit] ? "ligado" : "desligado",
-                  )}
-                />
+                <box spacing={8}>
+                  <label
+                    class={active((state) =>
+                      state[project.unit] ? "projects-status on" : "projects-status",
+                    )}
+                    xalign={0}
+                    label={active((state) =>
+                      state[project.unit] ? "ligado" : "desligado",
+                    )}
+                  />
+                  <label class="projects-port" xalign={0} label={listenPort(project.url)} />
+                </box>
               </box>
               <button
                 class={active((state) =>

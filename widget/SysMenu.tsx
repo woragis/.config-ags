@@ -44,14 +44,16 @@ function cpuUsage(): number {
 export default function SysMenu() {
   const network = AstalNetwork.get_default()
   const bluetooth = AstalBluetooth.get_default()
-  const speaker = AstalWp.get_default()!.defaultSpeaker
+  const audio = AstalWp.get_default()!
+  const speaker = () => audio.defaultSpeaker
 
-  const wifi = createBinding(network, "wifi")
+  const ssid = createBinding(network, "wifi", "ssid")
+  const strength = createBinding(network, "wifi", "strength")
   const wired = createBinding(network, "wired")
   const btPowered = createBinding(bluetooth, "isPowered")
   const btConnected = createBinding(bluetooth, "isConnected")
-  const volume = createBinding(speaker, "volume")
-  const mute = createBinding(speaker, "mute")
+  const volume = createBinding(audio, "defaultSpeaker", "volume")
+  const mute = createBinding(audio, "defaultSpeaker", "mute")
   const volSlider = useDraggableSlider(() => volume())
 
   const [idleOn, setIdleOn] = createState(false)
@@ -63,8 +65,12 @@ export default function SysMenu() {
   }))
 
   const netLabel = createComputed(() => {
-    const w = wifi()
-    if (w && w.ssid) return `󰤨  ${w.ssid}`
+    const name = ssid()
+    if (name) {
+      const bars = Math.min(4, Math.round((strength() ?? 0) / 25))
+      const icon = ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"][bars] ?? "󰤨"
+      return `${icon}  ${name}`
+    }
     if (wired()) return "󰈀  Ethernet"
     return "󰤭  Offline"
   })
@@ -99,6 +105,27 @@ export default function SysMenu() {
     } catch {
       // brightnessctl may be missing; ignore
     }
+  }
+
+  async function openTvCasting() {
+    const castApp = GLib.find_program_in_path("gnome-network-displays")
+    if (!castApp) {
+      await execAsync([
+        "notify-send",
+        "Transmitir para TV",
+        "O gnome-network-displays não está instalado. Instale-o para buscar TVs compatíveis com Miracast/Wi-Fi.",
+      ]).catch(printerr)
+      return
+    }
+
+    await execAsync([castApp]).catch((error) => {
+      printerr(error)
+      execAsync([
+        "notify-send",
+        "Transmitir para TV",
+        "Não foi possível abrir o app de transmissão.",
+      ]).catch(printerr)
+    })
   }
 
   async function toggleIdle() {
@@ -158,6 +185,14 @@ export default function SysMenu() {
             <label xalign={0} label={btLabel} />
           </button>
 
+          <button
+            class="sys-row"
+            onClicked={openTvCasting}
+            tooltipText="Buscar TVs para espelhar a tela via Miracast/Wi-Fi"
+          >
+            <label xalign={0} label="󰍹  Transmitir para TV" />
+          </button>
+
           <label class="section" xalign={0} label="LEVELS" />
 
           <box class="sys-slider-row" spacing={6}>
@@ -167,15 +202,18 @@ export default function SysMenu() {
               value={volSlider.value}
               onChangeValue={(e) => {
                 volSlider.onChangeValue(e)
-                speaker.set_volume(Math.min(1, Math.max(0, e.value)))
+                speaker()?.set_volume(Math.min(1, Math.max(0, e.value)))
               }}
               $={(self) =>
                 volSlider.setup(self, (v) =>
-                  speaker.set_volume(Math.min(1, Math.max(0, v))),
+                  speaker()?.set_volume(Math.min(1, Math.max(0, v))),
                 )
               }
             />
-            <button onClicked={() => (speaker.mute = !mute())}>
+            <button onClicked={() => {
+              const s = speaker()
+              if (s) s.mute = !s.mute
+            }}>
               <label label={mute((m) => (m ? "󰝟" : "󰕾"))} />
             </button>
           </box>
@@ -227,7 +265,11 @@ export default function SysMenu() {
             <button
               tooltipText="Lock / DPMS"
               onClicked={() =>
-                execAsync(["hyprctl", "dispatch", "dpms", "off"]).catch(printerr)
+                execAsync([
+                  "hyprctl",
+                  "dispatch",
+                  'hl.dsp.dpms({ action = "off" })',
+                ]).catch(printerr)
               }
             >
               <label label="󰌾" />

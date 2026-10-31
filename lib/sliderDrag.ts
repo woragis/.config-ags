@@ -50,6 +50,7 @@ export function useDraggableSlider(external: () => number) {
     click.connect("released", finish)
     click.connect("cancel", cancel)
     click.connect("unpaired-release", finish)
+    click.connect("end", finish)
     self.add_controller(click)
   }
 

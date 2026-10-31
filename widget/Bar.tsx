@@ -5,8 +5,10 @@ import Workspaces from "./Workspaces"
 import FocusedTitle from "./FocusedTitle"
 import Media from "./Media"
 import Volume from "./Volume"
+import Memory from "./Memory"
 import Battery from "./Battery"
 import Clock from "./Clock"
+import Tray from "./Tray"
 import SysMenu from "./SysMenu"
 
 export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
@@ -25,25 +27,25 @@ export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
       exclusivity={Astal.Exclusivity.EXCLUSIVE}
       anchor={TOP | LEFT | RIGHT}
       application={app}
-      css="min-height: 56px;"
     >
-      <centerbox cssName="bar-center">
-        <box $type="start" class="Left" spacing={7} valign={Gtk.Align.CENTER}>
-          <Workspaces />
-          <FocusedTitle />
-        </box>
-
-        <box $type="center" class="Center" valign={Gtk.Align.CENTER}>
-          <Media />
-        </box>
-
-        <box $type="end" class="Right" spacing={2} valign={Gtk.Align.CENTER}>
-          <Volume />
-          <Battery />
-          <Clock />
-          <SysMenu />
-        </box>
-      </centerbox>
+      <overlay class="bar-shell">
+        <centerbox hexpand cssName="bar-center">
+          <box $type="start" class="Left" spacing={10} valign={Gtk.Align.CENTER}>
+            <Workspaces />
+            <FocusedTitle />
+          </box>
+          <box $type="center" />
+          <box $type="end" class="Right" spacing={4} valign={Gtk.Align.CENTER}>
+            <Volume />
+            <Memory />
+            <Battery />
+            <Clock />
+            <Tray />
+            <SysMenu />
+          </box>
+        </centerbox>
+        <Media $type="overlay" />
+      </overlay>
     </window>
   )
 }
