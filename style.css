@@ -659,7 +659,8 @@ window.Projects .projects-card {
   border: 1px solid alpha(@tn-fg, 0.1);
   border-radius: 16px;
   padding: 16px 16px 14px;
-  min-width: 420px;
+  min-width: 760px;
+  min-height: 360px;
   box-shadow:
     0 10px 32px alpha(#000000, 0.38),
     inset 0 1px 0 alpha(@tn-fg, 0.07);
@@ -670,6 +671,37 @@ window.Projects .projects-title {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
+}
+
+window.Projects .projects-footnote {
+  color: @tn-muted;
+  font-size: 10px;
+  padding-top: 3px;
+}
+
+window.Projects .projects-entry {
+  background: alpha(@tn-surface, 0.38);
+  border: 1px solid alpha(@tn-fg, 0.045);
+  border-radius: 10px;
+  padding: 7px 9px;
+}
+
+window.Projects .projects-index {
+  color: @tn-muted;
+  min-width: 24px;
+  font-size: 11px;
+}
+
+window.Projects .projects-note {
+  color: @tn-muted;
+  font-size: 11px;
+  padding-left: 42px;
+}
+
+window.Projects .projects-component {
+  padding: 2px 0 0 43px;
+  color: @tn-muted;
+  font-size: 11px;
 }
 
 window.Projects .projects-row {
@@ -696,6 +728,14 @@ window.Projects .projects-status.on {
   color: @tn-green;
 }
 
+window.Projects .projects-status.partial {
+  color: @tn-yellow;
+}
+
+window.Projects .projects-status.failed {
+  color: @tn-red;
+}
+
 window.Projects .projects-port {
   color: @tn-muted;
   font-size: 12px;
@@ -716,6 +756,11 @@ window.Projects .projects-action:hover {
   background: alpha(@tn-blue, 0.16);
   border-color: alpha(@tn-blue, 0.35);
   color: @tn-cyan;
+}
+
+window.Projects .projects-action.primary {
+  color: @tn-cyan;
+  border-color: alpha(@tn-blue, 0.24);
 }
 
 window.Projects .projects-action.power.on {
